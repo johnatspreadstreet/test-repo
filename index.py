@@ -1,9 +1,12 @@
 # app.py
 from flask import Flask
 from flask_restplus import Resource, Api, fields
+from flask.json import jsonify
 from werkzeug.contrib.fixers import ProxyFix
 from database import db_session
 from models import BlogPost
+from max_n import max_n
+from bubble_sort import bubble_sort
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app)
@@ -28,6 +31,16 @@ class BlogPosts(Resource):
     @api.marshal_with(model, envelope='resource')
     def get(self, **kwargs):
         return BlogPost.query.all()
+
+@app.route("/max")
+def status():
+  return jsonify(max_n([1, 2, 3]))
+
+@app.route('/bubble_sort')
+def bubble():
+    lst = [54,26,93,17,77,31,44,55,20]
+    bubble_sort(lst)
+    return jsonify(lst)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
